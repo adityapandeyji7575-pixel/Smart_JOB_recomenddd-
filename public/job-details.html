@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details | SmartHire</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                🚀 Smart<span>Hire</span>
+            </a>
+            <ul class="nav-links" id="nav-dynamic-links"></ul>
+        </div>
+    </nav>
+
+    <main class="section">
+        <a href="jobs.html" style="display: inline-block; margin-bottom: 1.5rem; color: var(--primary-color); font-weight: 600;">&larr; Back to All Jobs</a>
+
+        <div id="job-details-container">
+            <!-- Dynamically loaded by jobs.js -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 SmartHire - Smart Job Recommendation System</p>
+    </footer>
+
+    <!-- SUPABASE JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script src="js/jobs.js"></script>
+</body>
+</html>

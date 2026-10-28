@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | SmartHire</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                🚀 Smart<span>Hire</span>
+            </a>
+            <ul class="nav-links" id="nav-dynamic-links"></ul>
+        </div>
+    </nav>
+
+    <!-- PROFILE CONTAINER -->
+    <div style="max-width: 700px; margin: 3rem auto; padding: 0 1.5rem;">
+        <div style="background-color: var(--card-bg); border-radius: var(--radius-lg); padding: 2.5rem; border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+            <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h2 style="font-size: 1.75rem; color: var(--secondary-color);">Student Profile</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Enter your skills & preferences to get accurately matched with job postings</p>
+            </div>
+
+            <div id="profile-alert" class="alert" style="display: none;"></div>
+
+            <form id="profile-form">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="full_name">Full Name</label>
+                        <input type="text" id="full_name" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="name@example.com" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="qualification">Highest Qualification</label>
+                        <select id="qualification" class="form-control" required>
+                            <option value="B.Tech">B.Tech (Computer Science / IT)</option>
+                            <option value="BCA">BCA (Bachelor of Computer Applications)</option>
+                            <option value="MCA">MCA (Master of Computer Applications)</option>
+                            <option value="B.Sc CS">B.Sc Computer Science</option>
+                            <option value="Diploma">Diploma in CS / IT</option>
+                            <option value="Other">Other Graduate</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="experience">Experience Level</label>
+                        <select id="experience" class="form-control" required>
+                            <option value="Fresher">Fresher (0 Years)</option>
+                            <option value="0-1 Years">0 – 1 Years</option>
+                            <option value="1-2 Years">1 – 2 Years</option>
+                            <option value="2+ Years">2+ Years</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="skills">Technical Skills (Comma Separated)</label>
+                    <input type="text" id="skills" class="form-control" placeholder="e.g. Python, SQL, HTML, CSS, Flask, React" required>
+                    <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.3rem;">Tip: Separate skills with commas for accurate matching score calculation.</small>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="preferred_location">Preferred Work Location</label>
+                        <input type="text" id="preferred_location" class="form-control" placeholder="e.g. Noida, Delhi, Remote" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="preferred_role">Preferred Job Role</label>
+                        <input type="text" id="preferred_role" class="form-control" placeholder="e.g. Python Developer, Frontend Developer" required>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: right;">
+                    <button type="button" id="download-resume" class="btn btn-secondary" style="padding: 0.8rem 2rem;">Download Resume PDF</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem;">Save Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 SmartHire - Smart Job Recommendation System</p>
+    </footer>
+
+    <!-- SUPABASE JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

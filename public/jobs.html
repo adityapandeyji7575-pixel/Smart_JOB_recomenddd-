@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Jobs | SmartHire</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                🚀 Smart<span>Hire</span>
+            </a>
+            <ul class="nav-links" id="nav-dynamic-links"></ul>
+        </div>
+    </nav>
+
+    <main class="section">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; color: var(--secondary-color);">Explore All Job Openings</h1>
+            <p style="color: var(--text-muted);">Browse tech jobs, filter by role, location, or experience level.</p>
+        </div>
+
+        <!-- SEARCH AND FILTER CONTAINER -->
+        <div class="search-filter-card">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <input type="text" id="search-input" class="form-control" placeholder="🔍 Search jobs by title, company, or skills (e.g. Python, Noida, React)...">
+            </div>
+
+            <div class="filter-grid">
+                <div>
+                    <label class="form-label">Filter Location</label>
+                    <select id="location-filter" class="form-control">
+                        <option value="">All Locations</option>
+                        <option value="noida">Noida</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="gurugram">Gurugram</option>
+                        <option value="bengaluru">Bengaluru</option>
+                        <option value="remote">Remote</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label">Filter Job Role</label>
+                    <select id="role-filter" class="form-control">
+                        <option value="">All Job Roles</option>
+                        <option value="developer">Developer</option>
+                        <option value="analyst">Analyst</option>
+                        <option value="engineer">Engineer</option>
+                        <option value="designer">Designer</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label">Filter Experience</label>
+                    <select id="experience-filter" class="form-control">
+                        <option value="">All Experience Levels</option>
+                        <option value="fresher">Fresher</option>
+                        <option value="0–1">0–1 Years</option>
+                        <option value="1">1 Year+</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- JOBS GRID -->
+        <div id="jobs-grid" class="jobs-grid">
+            <!-- Dynamically populated by jobs.js -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 SmartHire - Smart Job Recommendation System</p>
+    </footer>
+
+    <!-- SUPABASE JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script src="js/jobs.js"></script>
+</body>
+</html>

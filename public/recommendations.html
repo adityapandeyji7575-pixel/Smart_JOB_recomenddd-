@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Jobs | SmartHire</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                🚀 Smart<span>Hire</span>
+            </a>
+            <ul class="nav-links" id="nav-dynamic-links"></ul>
+        </div>
+    </nav>
+
+    <main class="section">
+        <div style="margin-bottom: 2rem;">
+            <span class="hero-badge">Smart Algorithm Active</span>
+            <h1 style="font-size: 2rem; color: var(--secondary-color); margin-top: 0.5rem;">Recommended Jobs For You</h1>
+            <p style="color: var(--text-muted);">
+                Jobs ranked by skill overlap with your profile (<strong id="student-skills-display">...</strong>).
+            </p>
+        </div>
+
+        <!-- RECOMMENDATIONS GRID -->
+        <div id="recommendations-grid" class="jobs-grid">
+            <!-- Dynamically loaded by recommendations.js -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 SmartHire - Smart Job Recommendation System</p>
+    </footer>
+
+    <!-- SUPABASE JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script src="js/recommendations.js"></script>
+</body>
+</html>

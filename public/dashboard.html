@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | SmartHire</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="brand-logo">
+                🚀 Smart<span>Hire</span>
+            </a>
+            <ul class="nav-links" id="nav-dynamic-links"></ul>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="section">
+
+        <!-- DASHBOARD BANNER -->
+        <div class="dashboard-banner">
+            <h1 id="welcome-user">Welcome, Student</h1>
+            <p>Here is your personalized job matching overview and active applications.</p>
+        </div>
+
+        <!-- STATS CARDS GRID -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👤</div>
+                <div class="stat-info">
+                    <h4>Profile Completion</h4>
+                    <p id="stat-completion">100%</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-info">
+                    <h4>Recommended Jobs</h4>
+                    <p id="stat-recommended-count">3</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📄</div>
+                <div class="stat-info">
+                    <h4>Applications</h4>
+                    <p id="stat-applications">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECOMMENDED JOBS SECTION -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.5rem; color: var(--secondary-color);">Recommended Jobs For You</h2>
+            <a href="recommendations.html" style="color: var(--primary-color); font-weight: 600;">View All Recommendations &rarr;</a>
+        </div>
+
+        <div id="dashboard-jobs-grid" class="jobs-grid">
+            <!-- Dynamically populated by jobs.js -->
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>&copy; 2026 SmartHire - Smart Job Recommendation System</p>
+    </footer>
+
+    <!-- SUPABASE JS SDK CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/jobs.js"></script>
+</body>
+</html>
