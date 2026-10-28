@@ -1,27 +1,18 @@
 // ==========================================
 // SMARTHIRE AUTHENTICATION JAVASCRIPT
-// Uses official Supabase Auth (signUp, signInWithPassword)
+// Uses Supabase Auth for real online accounts.
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('register-form');
     const loginForm = document.getElementById('login-form');
 
-    if (registerForm) {
-        registerForm.addEventListener('submit', handleRegister);
-    }
-
-    if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
-    }
+    if (registerForm) registerForm.addEventListener('submit', handleRegister);
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
 });
 
-// Handle User Registration with Supabase Authentication
 async function handleRegister(e) {
     e.preventDefault();
-    const alertBox = document.getElementById('auth-alert');
-    if (alertBox) alertBox.style.display = 'none';
-
     const fullName = document.getElementById('full_name').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
@@ -31,129 +22,87 @@ async function handleRegister(e) {
         showAlert('Please fill in all required fields.', 'error');
         return;
     }
-
     if (password !== confirmPassword) {
         showAlert('Passwords do not match. Please re-enter.', 'error');
         return;
     }
-
     if (password.length < 6) {
         showAlert('Password must be at least 6 characters long.', 'error');
         return;
     }
 
-    // Official Supabase Auth Registration
-    if (supabaseClient) {
-        showAlert('Creating account ', 'success');
-
-        const { data, error } = await supabaseClient.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: { full_name: fullName }
-            }
-        });
-
-        if (error) {
-            showAlert(`Supabase Auth Error: ${error.message}`, 'error');
-            return;
-        }
-
-        if (data.user) {
-            // Save initial profile row using server-side endpoint if available
-            const profilePayload = {
-                user_id: data.user.id,
-                full_name: fullName,
-                email: email,
-                qualification: 'B.Tech',
-                skills: 'Python, SQL, HTML, CSS',
-                experience: 'Fresher',
-                preferred_location: 'Noida',
-                preferred_role: 'Python Developer'
-            };
-
-            let profileError = null;
-            if (window.fetch) {
-                try {
-                    const resp = await fetch('/api/profile', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(profilePayload)
-                    });
-                    const json = await resp.json();
-                    if (!resp.ok) {
-                        profileError = new Error(json.error || 'Profile save failed');
-                    }
-                } catch (e) {
-                    profileError = e;
-                }
-            }
-
-            if (profileError && supabaseClient) {
-                const { error } = await supabaseClient
-                    .from('profiles')
-                    .upsert(profilePayload, { onConflict: 'user_id' });
-                if (error) profileError = error;
-            }
-
-            if (profileError) {
-                console.warn('Profile table insert notice:', profileError.message);
-            }
-
-            const newUser = {
-                id: data.user.id,
-                email: data.user.email,
-                full_name: fullName
-            };
-            localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(newUser));
-
-            const initialProfile = {
-                full_name: fullName,
-                email: email,
-                qualification: 'B.Tech',
-                skills: 'Python, SQL, HTML, CSS',
-                experience: 'Fresher',
-                preferred_location: 'Noida',
-                preferred_role: 'Python Developer'
-            };
-            localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE, JSON.stringify(initialProfile));
-
-            showAlert('Account created successfully in Supabase! Redirecting to Profile...', 'success');
-            setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
-            return;
-        }
+    await supabaseReady;
+    if (!supabaseClient) {
+        showAlert('Supabase is not configured. Check SUPABASE_URL and SUPABASE_ANON_KEY in Vercel.', 'error');
+        return;
     }
 
-    // Local Session Fallback (if Supabase credentials not set yet)
-    const newUser = {
-        id: 'user-' + Date.now(),
-        email: email,
-        full_name: fullName
-    };
+    showAlert('Creating account...', 'success');
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName } }
+    });
 
-    localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(newUser));
+    if (error) {
+        showAlert(`Supabase Auth Error: ${error.message}`, 'error');
+        return;
+    }
+    if (!data.user) {
+        showAlert('Supabase did not return a user. Please try again.', 'error');
+        return;
+    }
 
-    const initialProfile = {
+    const profilePayload = {
+        user_id: data.user.id,
         full_name: fullName,
-        email: email,
+        email,
         qualification: 'B.Tech',
         skills: 'Python, SQL, HTML, CSS',
         experience: 'Fresher',
         preferred_location: 'Noida',
         preferred_role: 'Python Developer'
     };
-    localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE, JSON.stringify(initialProfile));
 
-    showAlert('Account created successfully! Redirecting to Profile page...', 'success');
-    setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
+    try {
+        const response = await fetch('/api/profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profilePayload)
+        });
+        if (!response.ok) {
+            const { error: serverError } = await response.json().catch(() => ({}));
+            const { error: clientError } = await supabaseClient
+                .from('profiles')
+                .upsert(profilePayload, { onConflict: 'user_id' });
+            if (clientError) console.warn('Profile save notice:', serverError || clientError.message);
+        }
+    } catch (profileError) {
+        console.warn('Profile save notice:', profileError.message);
+    }
+
+    const user = {
+        id: data.user.id,
+        email: data.user.email,
+        full_name: fullName
+    };
+    localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE, JSON.stringify({
+        full_name: fullName,
+        email,
+        qualification: profilePayload.qualification,
+        skills: profilePayload.skills,
+        experience: profilePayload.experience,
+        preferred_location: profilePayload.preferred_location,
+        preferred_role: profilePayload.preferred_role
+    }));
+
+    showAlert('Account created with Supabase. Check your email if confirmation is required.', 'success');
+    setTimeout(() => { window.location.href = 'profile.html'; }, 1500);
 }
 
-// Handle User Login with Supabase Authentication
 async function handleLogin(e) {
     e.preventDefault();
-    const alertBox = document.getElementById('auth-alert');
-    if (alertBox) alertBox.style.display = 'none';
-
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
@@ -162,60 +111,44 @@ async function handleLogin(e) {
         return;
     }
 
-    // Official Supabase Auth Login
-    if (supabaseClient) {
-        showAlert('Authenticating with Supabase...', 'success');
-
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-
-        if (error) {
-            showAlert(`Supabase Auth Error: ${error.message}`, 'error');
-            return;
-        }
-
-        if (data.user) {
-            const user = {
-                id: data.user.id,
-                email: data.user.email,
-                full_name: data.user.user_metadata?.full_name || email.split('@')[0]
-            };
-
-            localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
-
-            // Fetch student profile from Supabase 'profiles' table
-            const { data: profileData, error: profErr } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .eq('user_id', data.user.id)
-                .single();
-
-            if (profileData && !profErr) {
-                localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE, JSON.stringify(profileData));
-            }
-
-            showAlert('Supabase Login successful! Redirecting to Dashboard...', 'success');
-            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
-            return;
-        }
+    await supabaseReady;
+    if (!supabaseClient) {
+        showAlert('Supabase is not configured. Check SUPABASE_URL and SUPABASE_ANON_KEY in Vercel.', 'error');
+        return;
     }
 
-    // Local Session Fallback
+    showAlert('Authenticating with Supabase...', 'success');
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+        showAlert(`Supabase Auth Error: ${error.message}`, 'error');
+        return;
+    }
+    if (!data.user) {
+        showAlert('Supabase did not return a user. Please try again.', 'error');
+        return;
+    }
+
     const user = {
-        id: 'user-' + Date.now(),
-        email: email,
-        full_name: email.split('@')[0] || 'Student'
+        id: data.user.id,
+        email: data.user.email,
+        full_name: data.user.user_metadata?.full_name || email.split('@')[0]
     };
-
     localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
-    showAlert('Login successful! Redirecting to Dashboard...', 'success');
 
+    const { data: profileData, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('user_id', data.user.id)
+        .single();
+
+    if (profileData && !profileError) {
+        localStorage.setItem(LOCAL_STORAGE_KEYS.PROFILE, JSON.stringify(profileData));
+    }
+
+    showAlert('Supabase login successful! Redirecting to Dashboard...', 'success');
     setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
 }
 
-// Display UI Alert Message
 function showAlert(message, type = 'error') {
     const alertBox = document.getElementById('auth-alert');
     if (!alertBox) return;

@@ -4,6 +4,8 @@
 // ==========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    await supabaseReady;
+
     const user = getCurrentUser();
     if (!user) {
         window.location.href = 'login.html';
@@ -121,6 +123,7 @@ async function loadProfileData() {
 // Save Profile Data to Supabase
 async function handleSaveProfile(e) {
     e.preventDefault();
+    await supabaseReady;
     const user = getCurrentUser();
 
     const profileData = {

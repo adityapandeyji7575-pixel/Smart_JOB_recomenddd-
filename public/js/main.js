@@ -3,20 +3,40 @@
 // Handles Supabase SDK initialization & navigation
 // ==========================================
 
-// Default Supabase Config (Users can also save keys dynamically in browser)
-let SUPABASE_URL = localStorage.getItem('SUPABASE_URL') || '';
-let SUPABASE_ANON_KEY = localStorage.getItem('SUPABASE_ANON_KEY') || '';
-
+// Load the public Supabase config from the server so every visitor can use auth.
+// Browser storage remains a fallback for local demos and manual setup.
+let SUPABASE_URL = '';
+let SUPABASE_ANON_KEY = '';
 let supabaseClient = null;
 
-if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+const supabaseReady = (async () => {
+    let config = {};
+    try {
+        const response = await fetch('/api/supabase-config', { cache: 'no-store' });
+        if (response.ok) config = await response.json();
+    } catch (error) {
+        console.warn('Could not load Supabase config from server:', error);
+    }
+
+    SUPABASE_URL = config.supabaseUrl || localStorage.getItem('SUPABASE_URL') || '';
+    SUPABASE_ANON_KEY = config.supabaseAnonKey || localStorage.getItem('SUPABASE_ANON_KEY') || '';
+
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        localStorage.setItem('SUPABASE_URL', SUPABASE_URL);
+        localStorage.setItem('SUPABASE_ANON_KEY', SUPABASE_ANON_KEY);
+    }
+
+    if (!window.supabase || !SUPABASE_URL || !SUPABASE_ANON_KEY) return null;
+
     try {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log("Supabase Client initialized successfully!");
-    } catch (e) {
-        console.warn("Supabase init error:", e);
+        console.log('Supabase client initialized successfully.');
+        return supabaseClient;
+    } catch (error) {
+        console.error('Supabase client initialization failed:', error);
+        return null;
     }
-}
+})();
 
 // Config Key Handler for User UI
 function setSupabaseConfig(url, key) {
@@ -162,6 +182,8 @@ function getCurrentProfile() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    await supabaseReady;
+
     // Sync session if Supabase client active
     if (supabaseClient) {
         const { data: { session } } = await supabaseClient.auth.getSession();

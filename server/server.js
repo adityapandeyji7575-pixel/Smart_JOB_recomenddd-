@@ -21,12 +21,22 @@ app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Public browser config: expose only the Supabase URL and publishable/anon key.
+app.get('/api/supabase-config', (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    res.json({
+        supabaseUrl: process.env.SUPABASE_URL || '',
+        supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
+        configured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY)
+    });
+});
+
 // Simple Health Check Endpoint
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'Server is running smoothly!',
         appName: 'SmartHire - Smart Job Recommendation System',
-        supabaseConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_URL !== 'https://your-supabase-project.supabase.co')
+        supabaseConfigured: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY)
     });
 });
 
