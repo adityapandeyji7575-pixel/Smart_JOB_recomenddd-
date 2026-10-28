@@ -53,6 +53,16 @@ async function handleRegister(e) {
         return;
     }
 
+    if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        showAlert('An account with this email may already exist. Try signing in with its password.', 'error');
+        return;
+    }
+
+    if (!data.session) {
+        showAlert('Account created. Check your email and confirm the address before signing in.', 'success');
+        return;
+    }
+
     const profilePayload = {
         user_id: data.user.id,
         full_name: fullName,
